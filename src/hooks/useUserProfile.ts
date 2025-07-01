@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { UserProfile, WorkoutSession, UserProgress } from '@/types/user';
 
@@ -7,6 +6,11 @@ const STORAGE_KEYS = {
   WORKOUT_SESSIONS: 'c25k_workout_sessions',
   USER_PROGRESS: 'c25k_user_progress'
 };
+
+// API base URL - adjust if backend runs on different port
+const API_BASE_URL = process.env.NODE_ENV === 'production' 
+  ? '/api' 
+  : 'http://localhost:3001/api';
 
 export const useUserProfile = () => {
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
@@ -54,6 +58,128 @@ export const useUserProfile = () => {
 
     loadUserData();
   }, []);
+
+  // API helper function
+  const apiCall = async (endpoint: string, options: RequestInit = {}) => {
+    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+      headers: {
+        'Content-Type': 'application/json',
+        ...options.headers,
+      },
+      ...options,
+    });
+    
+    if (!response.ok) {
+      throw new Error(`API call failed: ${response.statusText}`);
+    }
+    
+    return response;
+  };
+
+  // Generate a training plan using the backend API
+  const generateTrainingPlan = async (profileData: UserProfile) => {
+    try {
+      const userForAPI = {
+        name: profileData.name,
+        age: profileData.age,
+        weight: profileData.weight,
+        weight_unit: profileData.weightUnit === 'kg' ? 'kg' : 'i',
+        gender: profileData.gender,
+        start_day: new Date().toISOString(),
+        hour: parseInt(profileData.preferredTime.split(':')[0] || '7'),
+        minute: parseInt(profileData.preferredTime.split(':')[1] || '0'),
+        rest_days: profileData.restDays,
+        lang: profileData.language === 'en' ? 'e' : profileData.language,
+      };
+
+      const response = await apiCall('/generate-plan', {
+        method: 'POST',
+        body: JSON.stringify(userForAPI),
+      });
+
+      const result = await response.json();
+      if (result.success) {
+        return result.plan;
+      } else {
+        throw new Error(result.error || 'Failed to generate plan');
+      }
+    } catch (error) {
+      console.error('Error generating training plan:', error);
+      throw error;
+    }
+  };
+
+  // Export training plan in various formats
+  const exportTrainingPlan = async (format: string, profileData: UserProfile) => {
+    try {
+      // First generate the plan
+      const plan = await generateTrainingPlan(profileData);
+      
+      const exportData = {
+        format: format,
+        plan: plan,
+        user: {
+          name: profileData.name,
+          age: profileData.age,
+          weight: profileData.weight,
+          weight_unit: profileData.weightUnit === 'kg' ? 'kg' : 'i',
+          gender: profileData.gender,
+          start_day: new Date().toISOString(),
+          hour: parseInt(profileData.preferredTime.split(':')[0] || '7'),
+          minute: parseInt(profileData.preferredTime.split(':')[1] || '0'),
+          rest_days: profileData.restDays,
+          lang: profileData.language === 'en' ? 'e' : profileData.language,
+        }
+      };
+
+      const response = await apiCall('/export-plan', {
+        method: 'POST',
+        body: JSON.stringify(exportData),
+      });
+
+      // Handle file download
+      const blob = await response.blob();
+      const contentDisposition = response.headers.get('Content-Disposition');
+      const filename = contentDisposition 
+        ? contentDisposition.split('filename=')[1]?.replace(/"/g, '') 
+        : `c25k_plan.${format}`;
+
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+
+      return true;
+    } catch (error) {
+      console.error('Error exporting training plan:', error);
+      throw error;
+    }
+  };
+
+  // Get available export formats
+  const getExportFormats = async () => {
+    try {
+      const response = await apiCall('/export-formats');
+      const result = await response.json();
+      if (result.success) {
+        return result.formats;
+      } else {
+        throw new Error(result.error || 'Failed to get export formats');
+      }
+    } catch (error) {
+      console.error('Error getting export formats:', error);
+      return {
+        'csv': 'Spreadsheet format for Excel, Google Sheets, Numbers',
+        'json': 'Structured data format for developers and APIs',
+        'ics': 'Calendar format for Apple Calendar, Google Calendar, Outlook',
+        'markdown': 'Printable checklist format'
+      };
+    }
+  };
 
   const saveUserProfile = (profile: UserProfile) => {
     try {
@@ -220,6 +346,10 @@ export const useUserProfile = () => {
     saveUserProfile,
     saveWorkoutSession,
     markWorkoutCompleted,
-    exportUserData
+    exportUserData,
+    // New API-powered functions
+    generateTrainingPlan,
+    exportTrainingPlan,
+    getExportFormats
   };
 };
