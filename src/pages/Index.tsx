@@ -5,7 +5,9 @@ import CalendarWeek from "@/components/CalendarWeek";
 import UserProfileSetup from "@/components/UserProfileSetup";
 import WorkoutTimer from "@/components/WorkoutTimer";
 import ExportManager from "@/components/ExportManager";
+import AdvancedExportManager from "@/components/AdvancedExportManager";
 import { fullC25kProgram } from "@/data/fullC25kProgram";
+import { adaptWorkoutProgram, getPersonalizedTips, calculateTargetHeartRate } from "@/lib/adaptiveWorkouts";
 import { useUserProfile } from "@/hooks/useUserProfile";
 import { UserProfile } from "@/types/user";
 import { useState as useReactState } from "react";
@@ -34,15 +36,20 @@ const Index = () => {
     intervals: any[];
   } | null>(null);
   const [view, setView] = useState<'program' | 'timer' | 'profile' | 'analytics' | 'export'>('program');
+  const [adaptedProgram, setAdaptedProgram] = useState(fullC25kProgram);
   
-  const totalWeeks = fullC25kProgram.length;
+  const totalWeeks = adaptedProgram.length;
 
-  // Set current week based on user progress
+  // Set current week based on user progress and adapt program
   useEffect(() => {
     if (userProgress) {
       setCurrentWeek(userProgress.currentWeek - 1);
     }
-  }, [userProgress]);
+    if (userProfile) {
+      const adapted = adaptWorkoutProgram(userProfile);
+      setAdaptedProgram(adapted);
+    }
+  }, [userProgress, userProfile]);
 
   const nextWeek = () => {
     if (currentWeek < totalWeeks - 1) {
@@ -57,7 +64,7 @@ const Index = () => {
   };
 
   const handleWorkoutStart = (week: number, day: number) => {
-    const weekData = fullC25kProgram[week - 1];
+    const weekData = adaptedProgram[week - 1];
     const workout = weekData?.workouts.find(w => w.day === day);
     
     if (workout) {
@@ -230,8 +237,8 @@ const Index = () => {
             </div>
 
             <CalendarWeek 
-              weekNumber={fullC25kProgram[currentWeek].week}
-              workouts={fullC25kProgram[currentWeek].workouts}
+              weekNumber={adaptedProgram[currentWeek].week}
+              workouts={adaptedProgram[currentWeek].workouts}
               onWorkoutStart={handleWorkoutStart}
               completedWorkouts={workoutSessions
                 .filter(s => s.week === currentWeek + 1)
@@ -251,7 +258,7 @@ const Index = () => {
           </div>
         )}
 
-        {view === 'analytics' && (
+        {view === 'analytics' && userProfile && (
           <div className="space-y-6">
             <Card>
               <CardHeader>
@@ -274,13 +281,40 @@ const Index = () => {
                   )}
                   
                   <div>
+                    <h3 className="font-semibold mb-2">Personalized Tips</h3>
+                    <div className="space-y-2">
+                      {getPersonalizedTips(userProfile, currentWeek + 1).map((tip, index) => (
+                        <div key={index} className="p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 rounded-lg">
+                          <p className="text-sm text-blue-800 dark:text-blue-200">{tip}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {userProfile.medicalConditions.length === 0 && (
+                    <div>
+                      <h3 className="font-semibold mb-2">Target Heart Rate</h3>
+                      <div className="p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-700 rounded-lg">
+                        {(() => {
+                          const hr = calculateTargetHeartRate(userProfile);
+                          return (
+                            <p className="text-sm text-green-800 dark:text-green-200">
+                              Your target heart rate zone: {hr.min} - {hr.max} BPM
+                            </p>
+                          );
+                        })()}
+                      </div>
+                    </div>
+                  )}
+                  
+                  <div>
                     <h3 className="font-semibold mb-2">Workout History</h3>
                     <div className="space-y-2">
                       {workoutSessions.slice(-5).map((session) => (
-                        <div key={session.id} className="flex items-center justify-between p-2 bg-gray-50 rounded">
+                        <div key={session.id} className="flex items-center justify-between p-2 bg-gray-50 dark:bg-gray-700 rounded">
                           <div>
                             <span className="font-medium">Week {session.week}, Day {session.day}</span>
-                            <span className="text-sm text-gray-600 ml-2">
+                            <span className="text-sm text-gray-600 dark:text-gray-300 ml-2">
                               {session.startTime.toLocaleDateString()}
                             </span>
                           </div>
@@ -338,7 +372,11 @@ const Index = () => {
 
         {view === 'export' && userProfile && (
           <div className="space-y-6">
-            <ExportManager userProfile={userProfile} />
+            <AdvancedExportManager 
+              userProfile={userProfile} 
+              workoutSessions={workoutSessions}
+              currentWeek={currentWeek + 1}
+            />
           </div>
         )}
       </div>

@@ -31,6 +31,8 @@ export interface UserProfile {
     garminEnabled: boolean;
     intervalsEnabled: boolean;
     weatherEnabled: boolean;
+    appleHealthEnabled: boolean;
+    googleFitEnabled: boolean;
   };
   createdAt: Date;
   updatedAt: Date;

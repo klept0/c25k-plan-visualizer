@@ -46,6 +46,8 @@ const UserProfileSetup: React.FC<UserProfileSetupProps> = ({ onProfileCreated })
       garminEnabled: false,
       intervalsEnabled: false,
       weatherEnabled: false,
+      appleHealthEnabled: false,
+      googleFitEnabled: false,
     }
   });
 
