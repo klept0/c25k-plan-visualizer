@@ -1,18 +1,15 @@
 
 import WorkoutCard from "./WorkoutCard";
+import { Workout } from "@/data/fullC25kProgram";
 
 interface CalendarWeekProps {
   weekNumber: number;
-  workouts: Array<{
-    day: number;
-    warmup: string;
-    intervals: Array<{ type: 'run' | 'walk', duration: string }>;
-    cooldown: string;
-    completed?: boolean;
-  }>;
+  workouts: Workout[];
+  onWorkoutStart?: (week: number, day: number) => void;
+  completedWorkouts?: number[];
 }
 
-const CalendarWeek = ({ weekNumber, workouts }: CalendarWeekProps) => {
+const CalendarWeek = ({ weekNumber, workouts, onWorkoutStart, completedWorkouts = [] }: CalendarWeekProps) => {
   return (
     <div className="space-y-6">
       <div className="text-center">
@@ -29,7 +26,11 @@ const CalendarWeek = ({ weekNumber, workouts }: CalendarWeekProps) => {
             warmup={workout.warmup}
             intervals={workout.intervals}
             cooldown={workout.cooldown}
-            completed={workout.completed}
+            tips={workout.tips}
+            duration={workout.duration}
+            completed={completedWorkouts.includes(workout.day)}
+            safetyNotes={workout.safety_notes}
+            onWorkoutStart={onWorkoutStart}
           />
         ))}
       </div>
