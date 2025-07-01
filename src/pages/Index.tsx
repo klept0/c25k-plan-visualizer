@@ -4,6 +4,7 @@ import ProgramOverview from "@/components/ProgramOverview";
 import CalendarWeek from "@/components/CalendarWeek";
 import UserProfileSetup from "@/components/UserProfileSetup";
 import WorkoutTimer from "@/components/WorkoutTimer";
+import ExportManager from "@/components/ExportManager";
 import { fullC25kProgram } from "@/data/fullC25kProgram";
 import { useUserProfile } from "@/hooks/useUserProfile";
 import { useState as useReactState } from "react";
@@ -26,7 +27,7 @@ const Index = () => {
   const [currentWeek, setCurrentWeek] = useState(0);
   const [showWorkoutTimer, setShowWorkoutTimer] = useState(false);
   const [selectedWorkout, setSelectedWorkout] = useState<any>(null);
-  const [view, setView] = useState<'program' | 'timer' | 'profile' | 'analytics'>('program');
+  const [view, setView] = useState<'program' | 'timer' | 'profile' | 'analytics' | 'export'>('program');
   
   const totalWeeks = fullC25kProgram.length;
 
@@ -133,6 +134,14 @@ const Index = () => {
               >
                 <User className="h-4 w-4" />
                 Profile
+              </Button>
+              <Button 
+                variant={view === 'export' ? 'default' : 'outline'}
+                onClick={() => setView('export')}
+                className="flex items-center gap-2"
+              >
+                <Download className="h-4 w-4" />
+                Export
               </Button>
             </div>
           </div>
@@ -315,6 +324,12 @@ const Index = () => {
                 </div>
               </CardContent>
             </Card>
+          </div>
+        )}
+
+        {view === 'export' && userProfile && (
+          <div className="space-y-6">
+            <ExportManager userProfile={userProfile} />
           </div>
         )}
       </div>
