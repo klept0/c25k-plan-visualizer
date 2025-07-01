@@ -7,11 +7,13 @@ import WorkoutTimer from "@/components/WorkoutTimer";
 import ExportManager from "@/components/ExportManager";
 import { fullC25kProgram } from "@/data/fullC25kProgram";
 import { useUserProfile } from "@/hooks/useUserProfile";
+import { UserProfile } from "@/types/user";
 import { useState as useReactState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ChevronLeft, ChevronRight, Play, User, BarChart3, Calendar, Download } from "lucide-react";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 
 const Index = () => {
   const { 
@@ -26,7 +28,11 @@ const Index = () => {
   
   const [currentWeek, setCurrentWeek] = useState(0);
   const [showWorkoutTimer, setShowWorkoutTimer] = useState(false);
-  const [selectedWorkout, setSelectedWorkout] = useState<any>(null);
+  const [selectedWorkout, setSelectedWorkout] = useState<{
+    week: number;
+    day: number;
+    intervals: any[];
+  } | null>(null);
   const [view, setView] = useState<'program' | 'timer' | 'profile' | 'analytics' | 'export'>('program');
   
   const totalWeeks = fullC25kProgram.length;
@@ -82,16 +88,16 @@ const Index = () => {
     setView('program');
   };
 
-  const handleProfileCreated = (profileData: any) => {
+  const handleProfileCreated = (profileData: Omit<UserProfile, 'id' | 'createdAt' | 'updatedAt'>) => {
     createUserProfile(profileData);
   };
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-500 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading your C25K profile...</p>
+          <p className="text-gray-600 dark:text-gray-300">Loading your C25K profile...</p>
         </div>
       </div>
     );
@@ -102,7 +108,7 @@ const Index = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       <div className="container mx-auto px-4 py-8">
         {/* Header with Navigation */}
         <div className="mb-8">
@@ -110,39 +116,42 @@ const Index = () => {
             <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
               Welcome back, {userProfile.name}!
             </h1>
-            <div className="flex gap-2">
-              <Button 
-                variant={view === 'program' ? 'default' : 'outline'}
-                onClick={() => setView('program')}
-                className="flex items-center gap-2"
-              >
-                <Calendar className="h-4 w-4" />
-                Program
-              </Button>
-              <Button 
-                variant={view === 'analytics' ? 'default' : 'outline'}
-                onClick={() => setView('analytics')}
-                className="flex items-center gap-2"
-              >
-                <BarChart3 className="h-4 w-4" />
-                Progress
-              </Button>
-              <Button 
-                variant={view === 'profile' ? 'default' : 'outline'}
-                onClick={() => setView('profile')}
-                className="flex items-center gap-2"
-              >
-                <User className="h-4 w-4" />
-                Profile
-              </Button>
-              <Button 
-                variant={view === 'export' ? 'default' : 'outline'}
-                onClick={() => setView('export')}
-                className="flex items-center gap-2"
-              >
-                <Download className="h-4 w-4" />
-                Export
-              </Button>
+            <div className="flex items-center gap-2">
+              <ThemeToggle />
+              <div className="flex gap-2">
+                <Button 
+                  variant={view === 'program' ? 'default' : 'outline'}
+                  onClick={() => setView('program')}
+                  className="flex items-center gap-2"
+                >
+                  <Calendar className="h-4 w-4" />
+                  Program
+                </Button>
+                <Button 
+                  variant={view === 'analytics' ? 'default' : 'outline'}
+                  onClick={() => setView('analytics')}
+                  className="flex items-center gap-2"
+                >
+                  <BarChart3 className="h-4 w-4" />
+                  Progress
+                </Button>
+                <Button 
+                  variant={view === 'profile' ? 'default' : 'outline'}
+                  onClick={() => setView('profile')}
+                  className="flex items-center gap-2"
+                >
+                  <User className="h-4 w-4" />
+                  Profile
+                </Button>
+                <Button 
+                  variant={view === 'export' ? 'default' : 'outline'}
+                  onClick={() => setView('export')}
+                  className="flex items-center gap-2"
+                >
+                  <Download className="h-4 w-4" />
+                  Export
+                </Button>
+              </div>
             </div>
           </div>
 

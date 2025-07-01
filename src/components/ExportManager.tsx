@@ -164,9 +164,9 @@ const ExportManager: React.FC<ExportManagerProps> = ({ userProfile }) => {
           </div>
         )}
 
-        <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
-          <h4 className="font-semibold text-blue-800 mb-2">📱 How to Use Your Exports</h4>
-          <div className="text-sm text-blue-700 space-y-1">
+        <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-700">
+          <h4 className="font-semibold text-blue-800 dark:text-blue-200 mb-2">📱 How to Use Your Exports</h4>
+          <div className="text-sm text-blue-700 dark:text-blue-300 space-y-1">
             <p><strong>📅 ICS:</strong> Import into Apple Calendar, Google Calendar, or Outlook</p>
             <p><strong>📊 CSV:</strong> Open with Excel, Google Sheets, or Numbers for tracking</p>
             <p><strong>🔗 JSON:</strong> Use with fitness apps or custom integrations</p>

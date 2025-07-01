@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { UserProfile, WorkoutSession, UserProgress } from '@/types/user';
+import { UserProfile, WorkoutSession, UserProgress, Achievement } from '@/types/user';
 
 const STORAGE_KEYS = {
   USER_PROFILE: 'c25k_user_profile',
@@ -44,7 +44,7 @@ export const useUserProfile = () => {
 
         if (progressData) {
           const progress = JSON.parse(progressData);
-          progress.achievements.forEach((achievement: any) => {
+          progress.achievements.forEach((achievement: Achievement) => {
             achievement.unlockedAt = new Date(achievement.unlockedAt);
           });
           setUserProgress(progress);

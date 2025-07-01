@@ -1,20 +1,26 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { format } from "date-fns";
-import { writeFileSync } from "fs";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+interface CalendarEvent {
+  week: number;
+  day: number;
+  description: string;
+  duration: number;
+  dayOffset?: number;
+}
+
 export function generateICS(
-  plan,
-  startDay,
-  hour,
-  minute,
-  alertMinutes = 30,
-  outdir = "."
-) {
+  plan: CalendarEvent[],
+  startDay: Date,
+  hour: number,
+  minute: number,
+  alertMinutes = 30
+): string {
   let icsContent = "BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//Couch to 5K//EN\n";
 
   plan.forEach((session) => {
@@ -51,7 +57,17 @@ export function generateICS(
   });
 
   icsContent += "END:VCALENDAR";
+  return icsContent;
+}
 
-  const filename = `${outdir}/c25k_plan.ics`;
-  writeFileSync(filename, icsContent, "utf-8");
+export function downloadICS(content: string, filename = "c25k_plan.ics") {
+  const blob = new Blob([content], { type: "text/calendar;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
 }

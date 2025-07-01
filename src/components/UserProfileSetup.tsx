@@ -49,14 +49,14 @@ const UserProfileSetup: React.FC<UserProfileSetupProps> = ({ onProfileCreated })
     }
   });
 
-  const handleInputChange = (field: string, value: any) => {
+  const handleInputChange = (field: string, value: string | number | boolean) => {
     setProfileData(prev => ({
       ...prev,
       [field]: value
     }));
   };
 
-  const handleNestedInputChange = (category: string, field: string, value: any) => {
+  const handleNestedInputChange = (category: string, field: string, value: string | number | boolean) => {
     setProfileData(prev => ({
       ...prev,
       [category]: {
@@ -111,16 +111,16 @@ const UserProfileSetup: React.FC<UserProfileSetupProps> = ({ onProfileCreated })
   const totalSteps = 4;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center p-4">
       <Card className="w-full max-w-2xl">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold text-gray-800">
+          <CardTitle className="text-2xl font-bold text-gray-800 dark:text-gray-100">
             Welcome to C25K!
           </CardTitle>
-          <p className="text-gray-600">
+          <p className="text-gray-600 dark:text-gray-300">
             Step {currentStep} of {totalSteps}: Let's personalize your running journey
           </p>
-          <div className="w-full bg-gray-200 rounded-full h-2 mt-4">
+          <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 mt-4">
             <div
               className="bg-gradient-to-r from-blue-500 to-green-500 h-2 rounded-full transition-all duration-300"
               style={{ width: `${(currentStep / totalSteps) * 100}%` }}

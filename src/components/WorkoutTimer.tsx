@@ -6,9 +6,15 @@ import { Badge } from '@/components/ui/badge';
 import { Play, Pause, Square, SkipForward, Volume2, VolumeX } from 'lucide-react';
 import { WorkoutInterval } from '@/data/fullC25kProgram';
 
+interface CompletedInterval extends WorkoutInterval {
+  completed: boolean;
+  actualDuration?: number;
+  skipped?: boolean;
+}
+
 interface WorkoutTimerProps {
   intervals: WorkoutInterval[];
-  onWorkoutComplete: (completedIntervals: any[]) => void;
+  onWorkoutComplete: (completedIntervals: CompletedInterval[]) => void;
   onWorkoutStart?: () => void;
   audioEnabled?: boolean;
 }
@@ -22,7 +28,7 @@ const WorkoutTimer: React.FC<WorkoutTimerProps> = ({
   const [isRunning, setIsRunning] = useState(false);
   const [currentIntervalIndex, setCurrentIntervalIndex] = useState(0);
   const [timeRemaining, setTimeRemaining] = useState(0);
-  const [completedIntervals, setCompletedIntervals] = useState<any[]>([]);
+  const [completedIntervals, setCompletedIntervals] = useState<CompletedInterval[]>([]);
   const [isAudioEnabled, setIsAudioEnabled] = useState(audioEnabled);
   const [workoutStarted, setWorkoutStarted] = useState(false);
   
@@ -215,16 +221,16 @@ const WorkoutTimer: React.FC<WorkoutTimerProps> = ({
       <CardContent className="space-y-6">
         {/* Timer Display */}
         <div className="text-center">
-          <div className="text-6xl font-bold text-gray-800 mb-2">
+          <div className="text-6xl font-bold text-gray-800 dark:text-gray-100 mb-2">
             {formatTime(timeRemaining)}
           </div>
-          <div className="text-lg text-gray-600">
+          <div className="text-lg text-gray-600 dark:text-gray-300">
             {currentInterval.description || `${currentInterval.type} for ${currentInterval.duration}`}
           </div>
         </div>
 
         {/* Progress Bar */}
-        <div className="w-full bg-gray-200 rounded-full h-3">
+        <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3">
           <div
             className={`h-3 rounded-full transition-all duration-300 ${
               currentInterval.type === 'run' 
@@ -293,7 +299,7 @@ const WorkoutTimer: React.FC<WorkoutTimerProps> = ({
         </div>
 
         {/* Workout Progress */}
-        <div className="text-center text-sm text-gray-600">
+        <div className="text-center text-sm text-gray-600 dark:text-gray-300">
           <div>Progress: {completedIntervals.length} / {intervals.length} intervals</div>
           {completedIntervals.length > 0 && (
             <div className="mt-2">
