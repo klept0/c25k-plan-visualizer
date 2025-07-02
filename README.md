@@ -1,42 +1,70 @@
-# 🏃‍♀️ C25K Plan Visualizer - Integrated Application
+# 🏃‍♀️ C25K Plan Visualizer
 
 A modern, full-stack Couch to 5K training plan generator that combines a beautiful React UI with a powerful Python backend.
 
 ## 🌟 Overview
 
-This application integrates the original Python-based C25K Calendar Creator with a modern React frontend, providing:
+This application integrates a Python-based C25K Calendar Creator with a modern React frontend, providing:
 
 - **✨ Modern React UI**: Beautiful, responsive interface built with React, TypeScript, and Tailwind CSS
-- **🐍 Python Backend**: Powerful plan generation using the original NHS-based C25K algorithms
+- **🐍 Python Backend**: Powerful plan generation using NHS-based C25K algorithms
 - **📊 Multiple Export Formats**: ICS calendar files, CSV spreadsheets, JSON data, and Markdown checklists
 - **📱 Progressive Features**: User profiles, progress tracking, workout timer, and achievement system
 
-## 🚀 Quick Start
+## 🚀 Self-Hosting Options
 
-### Prerequisites
+### Option 1: GitHub Codespaces (Recommended)
+
+The easiest way to self-host this application is using GitHub Codespaces:
+
+1. **Fork this repository** to your GitHub account
+2. **Open in Codespaces**:
+   - Click the "Code" button (green button) in your forked repository
+   - Select the "Codespaces" tab
+   - Click "Create codespace on main"
+3. **Automatic Setup**: The devcontainer will automatically:
+   - Install Node.js and Python
+   - Install all dependencies
+   - Forward ports 8080 (frontend) and 3001 (backend)
+4. **Start the Application**:
+   ```bash
+   ./start_full_app.sh
+   ```
+5. **Access Your App**: Codespaces will automatically open the frontend at the forwarded port
+
+**Benefits of GitHub Codespaces:**
+- ✅ No local setup required
+- ✅ Consistent development environment
+- ✅ Free tier available (60 hours/month)
+- ✅ Accessible from any device with a browser
+- ✅ Easy to share with collaborators
+
+### Option 2: Local Development
+
+#### Prerequisites
 
 - **Node.js** (16+) and npm
 - **Python 3.8+**
 - **Git**
 
-### One-Command Startup
+#### Quick Start
 
 ```bash
-# Start both frontend and backend services
+# Clone the repository
+git clone <your-fork-url>
+cd c25k-plan-visualizer
+
+# One-command startup
 ./start_full_app.sh
 ```
 
 This will automatically:
-
 1. Install Python dependencies (Flask, Flask-CORS)
-
 2. Start the backend API server on port 3001
-
 3. Start the React development server on port 8080
-
 4. Open your browser to [http://localhost:8080](http://localhost:8080)
 
-### Manual Setup
+#### Manual Setup
 
 If you prefer to start services individually:
 
@@ -54,72 +82,167 @@ python3 -m pip install --break-system-packages Flask Flask-CORS
 npm run dev
 ```
 
-## Project Info
+### Option 3: Docker (Coming Soon)
 
-**URL**: [https://lovable.dev/projects/32662c6d-909e-4c7f-810d-2314fd533668](https://lovable.dev/projects/32662c6d-909e-4c7f-810d-2314fd533668)
+Docker support is planned for future releases to provide containerized deployment.
 
-## Editing Options
+## 🏗️ Architecture
 
-### Use Lovable
+```
+C25K Plan Visualizer
+├── Frontend (React + TypeScript)
+│   ├── Modern UI components
+│   ├── User profile management
+│   ├── Workout timer
+│   └── Progress tracking
+├── Backend (Python + Flask)
+│   ├── Plan generation API
+│   ├── Export functionality
+│   └── Original C25K algorithms
+└── Integration Layer
+    ├── RESTful API
+    ├── File downloads
+    └── Real-time communication
+```
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/32662c6d-909e-4c7f-810d-2314fd533668) and start prompting.
+## 📱 Features
 
-Changes made via Lovable will be committed automatically to this repo.
+### ✅ Core Features
 
-### Use Your Preferred IDE
+- **🎯 User Profile Setup**: Personalized onboarding with health considerations
+- **📅 Training Plan Visualization**: Week-by-week workout calendar
+- **⏱️ Interactive Workout Timer**: Real-time interval training with audio cues
+- **📊 Progress Tracking**: Achievements, statistics, and workout history
+- **📥 Export Functionality**: Multiple formats for different use cases
+- **♿ Accessibility**: High contrast, large fonts, screen reader support
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+### 📥 Export Formats
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+| Format | Use Case | Status |
+|--------|----------|---------|
+| **📅 ICS** | Apple Calendar, Google Calendar, Outlook | ✅ Working |
+| **📊 CSV** | Excel, Google Sheets, Numbers | ✅ Working |
+| **🔗 JSON** | App integration, data processing | ✅ Working |
+| **📄 Markdown** | Printable checklists | ✅ Working |
 
-Follow these steps:
+## 🔌 API Endpoints
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+The backend provides these key endpoints:
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+```
+GET  /api/health                 # Health check
+POST /api/generate-plan          # Generate training plan
+POST /api/export-plan           # Export plan in various formats
+GET  /api/export-formats        # Get available export formats
+```
 
-# Step 3: Install the necessary dependencies.
-npm i
+## 🏃‍♀️ Usage Guide
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+### 1. Initial Setup
+1. Launch the application using `./start_full_app.sh`
+2. Complete your user profile (age, weight, fitness level, preferences)
+3. Set your preferred workout time and rest days
+
+### 2. Training Plan
+- View your personalized 9-week C25K program
+- Navigate between weeks using arrow buttons
+- Click workout cards to start the timer
+
+### 3. Workout Timer
+- Follow interval-based training sessions
+- Get audio cues for run/walk transitions
+- Track completed intervals in real-time
+
+### 4. Export & Share
+- Go to the "Export" tab
+- Choose from ICS, CSV, JSON, or Markdown formats
+- Import into your favorite calendar or fitness app
+
+## 🛠️ Development
+
+### Project Structure
+
+```
+.
+├── .devcontainer/             # GitHub Codespaces configuration
+├── src/                       # React frontend source
+│   ├── components/           # UI components
+│   ├── hooks/                # React hooks
+│   ├── pages/                # Page components
+│   └── types/                # TypeScript definitions
+├── backend/                  # Python backend
+│   ├── api_server.py         # Flask API server
+│   └── requirements.txt      # Python dependencies
+├── public/                   # Static assets
+├── start_full_app.sh         # Complete application startup
+└── start_backend.sh          # Backend-only startup
+```
+
+### Technologies Used
+
+- **Frontend**: React, TypeScript, Tailwind CSS, shadcn/ui
+- **Backend**: Python, Flask, Flask-CORS
+- **Build Tools**: Vite, ESLint, PostCSS
+- **Development**: GitHub Codespaces, VS Code
+
+## 🐛 Troubleshooting
+
+### Backend Issues
+
+```bash
+# Check if backend is running
+curl http://localhost:3001/api/health
+
+# Manual backend restart
+cd backend && python3 api_server.py
+```
+
+### Frontend Issues
+
+```bash
+# Clear cache and restart
+rm -rf node_modules package-lock.json
+npm install
 npm run dev
 ```
 
-### Edit a File Directly in GitHub
+### GitHub Codespaces Issues
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+- **Port forwarding**: Ensure ports 8080 and 3001 are properly forwarded
+- **Dependencies**: Rebuild the container if dependencies aren't installing
+- **Python issues**: The devcontainer uses Python 3.11 by default
 
-### Use GitHub Codespaces
+## 🤝 Contributing
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Make your changes
+4. Test both frontend and backend
+5. Commit your changes (`git commit -m 'Add amazing feature'`)
+6. Push to the branch (`git push origin feature/amazing-feature`)
+7. Open a Pull Request
 
-## What technologies are used for this project?
+## 📄 License
 
-This project is built with:
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+## 🎉 Getting Started
 
-## How can I deploy this project?
+Ready to start your C25K journey? 
 
-Simply open [Lovable](https://lovable.dev/projects/32662c6d-909e-4c7f-810d-2314fd533668) and click on Share -> Publish.
+**Using GitHub Codespaces (Recommended):**
+1. Fork this repository
+2. Open it in GitHub Codespaces
+3. Run `./start_full_app.sh`
+4. Start training!
 
-## Can I connect a custom domain to my Lovable project?
+**Local Development:**
+```bash
+git clone <your-fork-url>
+cd c25k-plan-visualizer
+./start_full_app.sh
+```
 
-Yes, you can!
+---
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+**Medical Disclaimer**: This application is for informational purposes only. Always consult your healthcare provider before starting any new exercise program.

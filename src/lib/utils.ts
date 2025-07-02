@@ -1,19 +1,17 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { format } from "date-fns";
-import { writeFileSync } from "fs";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export function generateICS(
+export function generateICSContent(
   plan,
   startDay,
   hour,
   minute,
-  alertMinutes = 30,
-  outdir = "."
+  alertMinutes = 30
 ) {
   let icsContent = "BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//Couch to 5K//EN\n";
 
@@ -51,7 +49,5 @@ export function generateICS(
   });
 
   icsContent += "END:VCALENDAR";
-
-  const filename = `${outdir}/c25k_plan.ics`;
-  writeFileSync(filename, icsContent, "utf-8");
+  return icsContent;
 }

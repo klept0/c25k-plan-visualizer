@@ -1,5 +1,34 @@
 # Changelog
 
+## [1.1.0] - 2025-01-20
+
+### Added
+
+- GitHub Codespaces support with devcontainer configuration
+- Comprehensive self-hosting documentation
+- Enhanced README with multiple deployment options
+
+### Changed
+
+- Optimized project structure and removed unnecessary dependencies
+- Updated meta tags and project branding
+- Improved development workflow documentation
+
+### Removed
+
+- All Lovable platform references and dependencies
+- lovable-tagger from build process
+- Redundant INTEGRATION_README.md file
+- Unnecessary project metadata
+
+### Fixed
+
+- Cleaned up package.json dependencies
+- Optimized vite configuration
+- Improved project naming consistency
+
+---
+
 ## [1.0.0] - 2025-07-01
 
 ### New Features
